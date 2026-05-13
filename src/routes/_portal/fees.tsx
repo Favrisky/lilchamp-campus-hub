@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PortalLayout";
 import { fees as initialFees } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, Wallet, CheckCircle2, Clock, Receipt, X } from "lucide-react";
+import { CreditCard, Wallet, CheckCircle2, Clock, Receipt, X, Download } from "lucide-react";
+import { generateReceipt } from "@/lib/receipt";
+import { defaultStudent, getStudent, type Student } from "@/lib/auth";
 
 export const Route = createFileRoute("/_portal/fees")({
   head: () => ({ meta: [{ title: "Fees Payment — LCU Portal" }] }),
