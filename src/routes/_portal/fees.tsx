@@ -116,7 +116,7 @@ function Fees() {
                   </td>
                   <td className="px-5 py-4 text-right">
                     {f.status === "Paid" ? (
-                      <Button size="sm" variant="outline"><Receipt size={14} className="mr-1" /> Receipt</Button>
+                      <Button size="sm" variant="outline" onClick={() => generateReceipt(f, student)}><Receipt size={14} className="mr-1" /> Receipt</Button>
                     ) : (
                       <Button size="sm" onClick={() => setPay(f.id)} className="bg-primary hover:bg-primary-glow">Pay Now</Button>
                     )}
