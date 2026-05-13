@@ -76,10 +76,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "Lil Champ University — a leading Nigerian institution committed to academic excellence and character development." },
       { name: "author", content: "Lil Champ University" },
       { property: "og:title", content: "Lil Champ University" },
-      { property: "og:description", content: "Knowledge · Honour · Service" },
+      { property: "og:description", content: "Lil Champ University — a leading Nigerian institution committed to academic excellence and character development." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Lil Champ University" },
+      { name: "twitter:description", content: "Lil Champ University — a leading Nigerian institution committed to academic excellence and character development." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/dd8b92f0-6b9b-4486-b3fe-ccf9d326ef0a" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/dd8b92f0-6b9b-4486-b3fe-ccf9d326ef0a" },
     ],
     links: [
       {
