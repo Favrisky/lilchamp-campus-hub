@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PortalLayout";
 import { fees as initialFees } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CreditCard, Wallet, CheckCircle2, Clock, Receipt, X } from "lucide-react";
+import { CreditCard, Wallet, CheckCircle2, Clock, Receipt, X, Download } from "lucide-react";
+import { generateReceipt } from "@/lib/receipt";
+import { defaultStudent, getStudent, type Student } from "@/lib/auth";
 
 export const Route = createFileRoute("/_portal/fees")({
   head: () => ({ meta: [{ title: "Fees Payment — LCU Portal" }] }),
@@ -16,35 +18,43 @@ function Fees() {
   const [fees, setFees] = useState(initialFees);
   const [pay, setPay] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [student, setStudent] = useState<Student>(defaultStudent);
+
+  useEffect(() => { const s = getStudent(); if (s) setStudent(s); }, []);
 
   const total = fees.reduce((a, f) => a + f.amount, 0);
   const paid = fees.filter((f) => f.status === "Paid").reduce((a, f) => a + f.amount, 0);
   const outstanding = total - paid;
 
   const target = fees.find((f) => f.id === pay);
+  const successFee = fees.find((f) => f.id === success);
 
   const completePay = () => {
-    if (!pay) return;
+    if (!pay || !target) return;
     setFees((fs) => fs.map((f) => (f.id === pay ? { ...f, status: "Paid" } : f)));
+    generateReceipt(target, student);
     setSuccess(pay);
     setPay(null);
-    setTimeout(() => setSuccess(null), 4000);
+    setTimeout(() => setSuccess(null), 6000);
   };
 
   return (
     <>
       <PageHeader title="Fees & Payments" subtitle="2024/2025 Academic Session" />
 
-      {success && (
+      {success && successFee && (
         <div className="mb-6 rounded-xl bg-success/10 border border-success/30 p-4 flex items-center gap-3">
           <CheckCircle2 className="text-success" />
           <div className="flex-1">
-            <div className="font-semibold text-sm">Payment successful</div>
-            <div className="text-xs text-muted-foreground">A receipt has been sent to your email.</div>
+            <div className="font-semibold text-sm">Payment successful — receipt downloaded</div>
+            <div className="text-xs text-muted-foreground">Your PDF receipt has been saved. A copy was also emailed to you.</div>
           </div>
-          <Button variant="outline" size="sm"><Receipt size={14} className="mr-1" /> Receipt</Button>
+          <Button variant="outline" size="sm" onClick={() => generateReceipt(successFee, student)}>
+            <Download size={14} className="mr-1" /> Download again
+          </Button>
         </div>
       )}
+
 
       {/* Summary */}
       <div className="grid md:grid-cols-3 gap-4 mb-8">
@@ -106,7 +116,7 @@ function Fees() {
                   </td>
                   <td className="px-5 py-4 text-right">
                     {f.status === "Paid" ? (
-                      <Button size="sm" variant="outline"><Receipt size={14} className="mr-1" /> Receipt</Button>
+                      <Button size="sm" variant="outline" onClick={() => generateReceipt(f, student)}><Receipt size={14} className="mr-1" /> Receipt</Button>
                     ) : (
                       <Button size="sm" onClick={() => setPay(f.id)} className="bg-primary hover:bg-primary-glow">Pay Now</Button>
                     )}
