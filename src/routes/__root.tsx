@@ -7,6 +7,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 
@@ -72,24 +73,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lil Champ University" },
-      { name: "description", content: "Lil Champ University — a leading Nigerian institution committed to academic excellence and character development." },
-      { name: "author", content: "Lil Champ University" },
-      { property: "og:title", content: "Lil Champ University" },
-      { property: "og:description", content: "Lil Champ University — a leading Nigerian institution committed to academic excellence and character development." },
+      { title: "RiskyDigitals — Digital Marketing Agency" },
+      { name: "description", content: "RiskyDigitals builds growth systems for ambitious brands: paid ads, social, content, and lead generation that compound." },
+      { name: "author", content: "RiskyDigitals" },
+      { property: "og:title", content: "RiskyDigitals — Digital Marketing Agency" },
+      { property: "og:description", content: "Growth systems for ambitious brands." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lil Champ University" },
-      { name: "twitter:description", content: "Lil Champ University — a leading Nigerian institution committed to academic excellence and character development." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/dd8b92f0-6b9b-4486-b3fe-ccf9d326ef0a" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/dd8b92f0-6b9b-4486-b3fe-ccf9d326ef0a" },
+      { name: "twitter:title", content: "RiskyDigitals" },
+      { name: "twitter:description", content: "Growth systems for ambitious brands." },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" },
     ],
   }),
   shellComponent: RootShell,
@@ -118,6 +116,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
+      <Toaster richColors position="top-right" />
     </QueryClientProvider>
   );
 }
