@@ -1,59 +1,40 @@
-export type Student = {
-  id: string;
-  matric: string;
-  name: string;
-  email: string;
-  faculty: string;
-  department: string;
-  level: string;
-  phone: string;
-  address: string;
-  dob: string;
-  gender: string;
-  state: string;
-  avatar?: string;
-};
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import type { Session, User } from "@supabase/supabase-js";
 
-const KEY = "lcu_auth";
+export type Role = "admin" | "client";
 
-export const defaultStudent: Student = {
-  id: "stu_001",
-  matric: "LCU/CSC/2022/0451",
-  name: "Adebola Okonkwo",
-  email: "adebola.okonkwo@lilchamp.edu.ng",
-  faculty: "Science",
-  department: "Computer Science",
-  level: "300L",
-  phone: "+234 803 555 0142",
-  address: "12 Awolowo Way, Ikeja, Lagos",
-  dob: "2003-04-18",
-  gender: "Female",
-  state: "Lagos",
-};
+export function useAuth() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<Role | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export function getStudent(): Student | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = localStorage.getItem(KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
+      setSession(s);
+      setUser(s?.user ?? null);
+      if (s?.user) {
+        setTimeout(async () => {
+          const { data } = await supabase.from("user_roles").select("role").eq("user_id", s.user.id);
+          const roles = (data ?? []).map((r) => r.role as Role);
+          setRole(roles.includes("admin") ? "admin" : (roles[0] ?? "client"));
+        }, 0);
+      } else {
+        setRole(null);
+      }
+    });
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return { session, user, role, loading, isAdmin: role === "admin" };
 }
 
-export function login(matric: string, _password: string): Student {
-  const student = { ...defaultStudent, matric: matric || defaultStudent.matric };
-  localStorage.setItem(KEY, JSON.stringify(student));
-  return student;
-}
-
-export function logout() {
-  localStorage.removeItem(KEY);
-}
-
-export function updateStudent(patch: Partial<Student>): Student {
-  const cur = getStudent() ?? defaultStudent;
-  const next = { ...cur, ...patch };
-  localStorage.setItem(KEY, JSON.stringify(next));
-  return next;
+export async function signOut() {
+  await supabase.auth.signOut();
 }
